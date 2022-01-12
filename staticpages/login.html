@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello World</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    
+    <!-- Don't use this in production: -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+
+
+class LoginForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {userName: '',
+                  password: '',};
+
+    this.handleChangeUserName = this.handleChangeUserName.bind(this);
+    this.handleChangePassword = this.handleChangePassword.bind(this);
+    
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.setOwnerState = props.setOwnerState;
+  }
+
+  handleChangeUserName(event) {
+    this.setState({userName: event.target.value});
+  }
+  handleChangePassword(event) {
+    this.setState({password: event.target.value});
+  }
+
+  handleSubmit(event) {
+    alert('A name was submitted: ' + this.state.userName);
+
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: this.state.userName, password:  this.state.password})
+    };
+    fetch('login', requestOptions)
+        .then(response => response.json())
+        .then((data) => 
+        {
+            if(data.code=="loginOK"){
+                this.setState({ loggedIn: true });
+                this.setOwnerState({loggedIn: true});
+            }
+            else if(data.code=="loginFailed"){
+                this.setState({ loggedIn: false });
+                this.setOwnerState({loggedIn: false});
+            }
+        });
+        
+    event.preventDefault();
+  }
+
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <label>UserID</label><br/>
+        <input type="text" value={this.state.userName} onChange={this.handleChangeUserName} /><br/>
+        <br/>
+        <label>Password</label><br/>  
+        <input type="password" value={this.state.password} onChange={this.handleChangePassword} /><br/>
+        <button>Log In</button>
+      </form>
+    );
+  }
+}
+
+class MainPage extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {loggedIn: false};
+  }
+
+
+  setStateByChild(stateObj){
+      
+      this.setState(stateObj);
+  }
+
+  render() {
+
+    let resp;
+    if(!this.state.loggedIn)
+    {   
+        resp = <LoginForm  setOwnerState={this.setStateByChild.bind(this)}/>;
+    }
+    else
+    {
+        resp = <h1>Welcome User</h1>;
+    }
+
+    
+    return (
+        <div>
+          <h1>this is the main page 1</h1>
+          {resp}
+      </div>
+    );
+  }
+};
+
+ReactDOM.render(
+  <MainPage/>,
+  document.getElementById('root')
+);
+
+//setInterval(tick, 1000);
+
+    </script>
+    <!--
+      Note: this page is a great way to try React but it's not suitable for production.
+      It slowly compiles JSX with Babel in the browser and uses a large development build of React.
+
+      Read this section for a production-ready setup with JSX:
+      https://reactjs.org/docs/add-react-to-a-website.html#add-jsx-to-a-project
+
+      In a larger project, you can use an integrated toolchain that includes JSX instead:
+      https://reactjs.org/docs/create-a-new-react-app.html
+
+      You can also use React without JSX, in which case you can remove Babel:
+      https://reactjs.org/docs/react-without-jsx.html
+    -->
+  </body>
+</html>
