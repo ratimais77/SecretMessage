@@ -4,7 +4,7 @@ Node/express server for storing crypto wallet, encrypted images and any other pe
 1) on the command line type:
       node SecretMessage_main.js 
    
-2) exit by pressing ctrl-c. this will create empty swlite database sm_database.db.
+2) exit by pressing ctrl-c. this will create empty sqlite database sm_database.db.
 3) using sqlitebrowser run getstarted.sql. this will put sample users and supported
    services in the database. 
 4) on the command line type: 
